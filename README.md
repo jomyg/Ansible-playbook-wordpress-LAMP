@@ -1,13 +1,48 @@
 # Ansible-playbook-wordpress-LAMP
 
+[![Build](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
+---
+
+## Description 
+
+
+
+----
+## Pre-Requests
+- Need to install Ansible on Master node to run
+-----
+
+## Includes
+
+- Mariadb
+- php
+- wordpress
+- Apache
+
+### Ansible installation 
+
+```sh
+sudo amazon-linux-extras install ansible2 -y
+
+
+ansible 2.9.23
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/home/ec2-user/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 2.7.18 (default, Jun 10 2021, 00:11:02) [GCC 7.3.1 20180712 (Red Hat 7.3.1-13)]
+```
+
+
+### Behind the code
 
 
 
 
 
 ```
-main.yml  my.cnf
+
 [ec2-user@ip-172-31-32-109 ~]$ ansible-playbook -i hosts main.yml --syntax-check
 
 playbook: main.yml
