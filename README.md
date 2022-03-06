@@ -224,9 +224,7 @@ playbook: main.yml
 ~]$ ansible-playbook -i hosts main.yml
 
 PLAY [Installing WordPress with LAMP Stack on Amazon Linux] ************************************************************
-TASK [Gathering Facts] *************************************************************************************************[WARNING]: Platform linux on host 172.31.34.80 is using the discovered Python interpreter at /usr/bin/python, but
-future installation of another Python interpreter could change this. See
-https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+TASK [Gathering Facts] *************************************************************************************************
 ok: [172.31.34.80]
 
 TASK [APACHE WEBSERVER INSTALLATION] ***********************************************************************************
@@ -251,7 +249,6 @@ TASK [Restarting & Enabling Mariadb] *******************************************
 changed: [172.31.34.80]
 
 TASK [Setup Root password for root user] *******************************************************************************
-[WARNING]: Module did not set no_log for update_password
 changed: [172.31.34.80]
 
 TASK [Create and passing the file from local to destination /root/.my.cnf] *********************************************
