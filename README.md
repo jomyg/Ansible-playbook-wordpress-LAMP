@@ -223,7 +223,7 @@ playbook: main.yml
 ```
 ~]$ ansible-playbook -i hosts main.yml
 
-PLAY [Installing WordPress with LAMP Stack on Amazon Linux] ************************************************************
+PLAY [Installing WordPress with LAMP on Amazon Linux] ************************************************************
 TASK [Gathering Facts] *************************************************************************************************
 ok: [172.31.34.80]
 
