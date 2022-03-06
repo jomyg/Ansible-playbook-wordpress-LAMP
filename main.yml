@@ -1,6 +1,6 @@
 ---
 
-- name: "Installing WordPress with LAMP Stack on Amazon Linux"
+- name: "Installing WordPress with LAMP on Amazon Linux"
   hosts: all
   become: true
   vars:
