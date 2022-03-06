@@ -6,7 +6,7 @@
 
 ## Description 
 
-
+Ansible playbook for creating the Mariadb, Php, Wordpress and Apache on client node using Ansible Master node. 
 
 ----
 ## Pre-Requests
@@ -40,13 +40,15 @@ ansible 2.9.23
 
 
 
+> Lets us check the syntax of our code using below
+```
+ ~]$ ansible-playbook -i hosts main.yml --syntax-check
+playbook: main.yml
+```
+> Let run the code and call the domain name on browser to access the wordpress dashboard
 
 ```
-
-[ec2-user@ip-172-31-32-109 ~]$ ansible-playbook -i hosts main.yml --syntax-check
-
-playbook: main.yml
-[ec2-user@ip-172-31-32-109 ~]$ ansible-playbook -i hosts main.yml
+~]$ ansible-playbook -i hosts main.yml
 
 PLAY [Installing WordPress with LAMP Stack on Amazon Linux] ************************************************************
 TASK [Gathering Facts] *************************************************************************************************[WARNING]: Platform linux on host 172.31.34.80 is using the discovered Python interpreter at /usr/bin/python, but
