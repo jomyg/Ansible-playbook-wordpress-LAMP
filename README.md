@@ -25,7 +25,7 @@
 ```sh
 sudo amazon-linux-extras install ansible2 -y
 
-
+ansible --version
 ansible 2.9.23
   config file = /etc/ansible/ansible.cfg
   configured module search path = [u'/home/ec2-user/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
