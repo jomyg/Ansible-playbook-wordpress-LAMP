@@ -1,0 +1,144 @@
+---
+
+- name: "Installing WordPress with LAMP Stack on Amazon Linux"
+  hosts: all
+  become: true
+  vars:
+    domain_name: jomygeorge.xyz
+    httpd_port: 80
+    URL: https://wordpress.org/latest.zip
+    mysql_root_password: root@123
+    wp_user_name: wpuser
+    wp_user_password: wp@123
+    httpd_owner: apache
+    httpd_group: apache
+    wp_db_name: wordpressdatabase
+
+  tasks:
+
+    - name: "APACHE WEBSERVER INSTALLATION"
+      yum:
+        name:
+          - httpd
+        state: present
+
+    - name: "Installing PHP"
+      shell: "amazon-linux-extras install php7.2 -y"
+
+    - name: "Adding Virtualhost form local to destination"
+      template:
+        src: virtualhost.conf.j2
+        dest: /etc/httpd/conf.d/{{ domain_name }}.conf
+        owner: "{{ httpd_owner }}"
+        group: "{{ httpd_group}}"
+
+    - name: "Creating Documentroot for {{ domain_name}}"
+      file:
+        state: directory
+        path: /var/www/html/{{ domain_name }}
+        owner: "{{ httpd_owner }}"
+        group: "{{ httpd_group}}"
+
+    - name: "Start & Enable Apache webserver"
+      service:
+        name: httpd
+        state: restarted
+        enabled: true
+
+    - name: "Installing and setting up the Mariadb-server"
+      yum:
+        name:
+          - mariadb-server
+          - MySQL-python
+        state: present
+      register: mariadb_status
+
+    - name: "Restarting & Enabling Mariadb"
+      when: mariadb_status.changed == true
+      service:
+        name: mariadb
+        state: restarted
+        enabled: true
+
+    - name: "Setup Root password for root user"
+      when: mariadb_status.changed == true
+      mysql_user:
+        login_user: root
+        login_password: ""
+        name: root
+        password: "{{ mysql_root_password }}"
+        host_all: yes
+
+
+    - name: "Create and passing the file from local to destination /root/.my.cnf"
+      when: mariadb_status.changed == true
+      template:
+        src:  my.cnf
+        dest: /root/.my.cnf
+        owner: root
+        group: root
+
+    - name: "Removing mariadb anonymous users"
+      when: mariadb_status.changed == true
+      mysql_user:
+        config_file: /root/.my.cnf
+        host_all: true
+        name: ""
+        state: absent
+
+    - name: "Remove test database from mariadb"
+      when: mariadb_status.changed == true
+      mysql_user:
+        config_file: /root/.my.cnf
+        name: test
+        state: absent
+
+
+    - name: "Creating the wordpress database"
+      mysql_db:
+        config_file: /root/.my.cnf
+        name: "{{ wp_db_name }}"
+        state: present
+
+    - name: "Creating Wordpress user"
+      mysql_user:
+        config_file: /root/.my.cnf
+        name: "{{ wp_user_name }}"
+        password: "{{ wp_user_password }}"
+        priv: '{{ wp_db_name }}.*:ALL'
+        state: present
+
+
+    - name: "Downloading the Wordpress zip file on remote meachine"
+      get_url:
+        url: "{{ URL }}"
+        dest: /tmp/wordpress.zip
+
+    - name: "Extracting Wordpress file on remote meachine"
+      unarchive:
+        remote_src: yes
+        src: /tmp/wordpress.zip
+        dest: /tmp/
+
+    - name: "Moving Wordpress extracted files to website Document root"
+      copy:
+        remote_src: yes
+        src: /tmp/wordpress/
+        dest: /var/www/html/{{ domain_name }}/
+        owner: "{{ httpd_owner }}"
+        group: "{{ httpd_group}}"
+
+    - name: "Creating wp-config.php and pass to remote meachine"
+      template:
+        src: wp-config.php
+        dest: /var/www/html/{{ domain_name }}/wp-config.php
+        owner: "{{ httpd_owner }}"
+        group: "{{ httpd_group}}"
+
+    - name: "Post installation restart for the httpd and mariadb service"
+      service:
+        name: "{{ item }}"
+        state: restarted
+      with_items:
+        - httpd
+        - mariadb
